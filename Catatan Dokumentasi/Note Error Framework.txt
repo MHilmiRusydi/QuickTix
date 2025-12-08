@@ -1,0 +1,3 @@
+#[\AllowDynamicProperties]
+itu di deklarasikan pada beberapa file system/core/[URI, Loader, Controller, Router] untuk menghilangkan
+beberapa error yang muncul.

@@ -1,0 +1,113 @@
+# Dokumentasi Proyek QuickTix - Website E-Ticket
+
+## 1. Informasi Umum
+- Nama Proyek: QuickTix
+- Tagline: "Tiket Cepat, Tanpa Ribet!"
+- Framework: CodeIgniter 3
+- Bahasa: PHP, HTML, CSS
+- Database: MySQL (belum diimplementasikan)
+
+## 2. Struktur Proyek
+```
+Project-UAS/
+├── application/
+│   ├── controllers/
+│   │   └── Home.php         # Controller utama untuk landing page
+│   ├── views/
+│   │   └── landing_page.php # View untuk landing page
+│   └── Config/
+│       └── routes.php       # Konfigurasi routing
+└── Catatan Project/
+    └── Dokumentasi Project.txt 
+```
+
+## 3. Fitur Utama
+### 3.1 Landing Page
+- Navbar responsif dengan menu navigasi
+- Hero section dengan call-to-action
+- Fitur unggulan (3 fitur utama)
+- Daftar event terbaru
+- Footer dengan social media links
+
+### 3.2 Fitur yang Akan Dikembangkan
+- Sistem autentikasi (login/register)
+- Manajemen event
+- Sistem pembayaran
+- Manajemen tiket
+- Dashboard admin
+- Notifikasi email
+
+## 4. Teknologi yang Digunakan
+### 4.1 Frontend
+- HTML5
+- CSS3 (Custom CSS)
+- Font: Poppins (Google Fonts)
+- Responsive Design
+- CSS Variables untuk konsistensi warna
+
+### 4.2 Backend
+- PHP 7.x
+- CodeIgniter 3
+- MySQL (akan diimplementasikan)
+
+## 5. Skema Warna
+```css
+:root {
+    --primary-color: #6C63FF;    /* Ungu modern */
+    --secondary-color: #4CAF50;  /* Hijau untuk aksen */
+    --accent-color: #FF6B6B;     /* Merah muda untuk highlight */
+    --text-color: #333333;       /* Abu-abu gelap untuk teks */
+    --light-bg: #F8F9FA;         /* Abu-abu sangat terang untuk background */
+    --white: #FFFFFF;            /* Putih */
+}
+```
+
+## 6. Alur Aplikasi
+1. User mengakses landing page
+2. Melihat daftar event yang tersedia
+3. Memilih event yang diinginkan
+4. Melakukan pembelian tiket (akan diimplementasikan)
+5. Melakukan pembayaran (akan diimplementasikan)
+6. Menerima e-ticket (akan diimplementasikan)
+
+## 7. Keamanan
+- Menggunakan prepared statements untuk query database
+- Validasi input user
+- CSRF protection
+- XSS prevention
+- Sanitasi data
+
+## 8. Performa
+- Optimasi gambar
+- Minifikasi CSS
+- Caching
+- Lazy loading untuk gambar
+
+## 9. Pengembangan Selanjutnya
+1. Implementasi database
+2. Sistem autentikasi
+3. Manajemen event
+4. Sistem pembayaran
+5. Manajemen tiket
+6. Dashboard admin
+7. Notifikasi email
+
+## 10. Catatan Penting
+- Pastikan folder uploads/ memiliki permission yang tepat
+- Konfigurasi base_url di config.php
+- Pengaturan timezone di config.php
+- Pengaturan session di config.php
+
+## 11. Kontak
+Untuk informasi lebih lanjut, silakan hubungi:
+- Email: [email]
+- Website: [website]
+- Social Media: [social media links]
+
+💡 Alur Sederhana (Untuk Slide PowerPoint):
+1. User masuk ke halaman utama →
+2. Klik event yang diinginkan →
+3. Isi form pemesanan →
+4. Lihat konfirmasi pemesanan →
+5. Selesai! Tiket bisa di-download (dummy)
+

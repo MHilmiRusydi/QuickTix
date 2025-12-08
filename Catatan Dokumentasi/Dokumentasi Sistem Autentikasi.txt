@@ -1,0 +1,104 @@
+DOKUMENTASI SISTEM AUTENTIKASI QUICKTIX
+=====================================
+
+1. Struktur Database
+-------------------
+Tabel users:
+- id (INT, PRIMARY KEY, AUTO_INCREMENT)
+- username (VARCHAR(50), UNIQUE)
+- email (VARCHAR(100), UNIQUE)
+- password (VARCHAR(255))
+- full_name (VARCHAR(100))
+- phone (VARCHAR(20))
+- created_at (DATETIME)
+- updated_at (DATETIME)
+- status (ENUM('active', 'inactive'))
+- role (ENUM('user', 'admin'))
+
+Tabel user_sessions:
+- id (INT, PRIMARY KEY, AUTO_INCREMENT)
+- user_id (INT, FOREIGN KEY)
+- session_token (VARCHAR(255))
+- ip_address (VARCHAR(45))
+- user_agent (TEXT)
+- created_at (DATETIME)
+- expires_at (DATETIME)
+
+2. Model (User_model.php)
+------------------------
+Fungsi-fungsi utama:
+- register($data): Mendaftarkan user baru
+- login($email, $password): Memproses login user
+- create_session($user_id): Membuat session baru
+- check_session($token): Memeriksa validitas session
+- logout(): Menghapus session
+- get_user_by_id($id): Mengambil data user berdasarkan ID
+- update_user($id, $data): Memperbarui data user
+
+3. Controller (Auth.php)
+-----------------------
+Endpoint-endpoint:
+- index(): Redirect ke login jika belum login
+- login(): Menangani proses login
+- register(): Menangani proses registrasi
+- logout(): Menangani proses logout
+
+4. View
+-------
+a. login.php:
+- Form login dengan email dan password
+- Validasi form
+- Pesan error/success
+- Link ke halaman register
+
+b. register.php:
+- Form registrasi dengan field:
+  * Username
+  * Email
+  * Password
+  * Konfirmasi Password
+  * Nama Lengkap
+  * Nomor Telepon
+- Validasi form
+- Pesan error/success
+- Link ke halaman login
+
+5. Fitur Keamanan
+----------------
+- Password di-hash menggunakan password_hash()
+- Validasi input menggunakan form_validation
+- Session management dengan token
+- Proteksi terhadap SQL injection
+- CSRF protection
+- XSS protection
+
+6. Alur Proses
+-------------
+a. Registrasi:
+1. User mengisi form registrasi
+2. Validasi input
+3. Hash password
+4. Simpan data ke database
+5. Redirect ke halaman login
+
+b. Login:
+1. User mengisi form login
+2. Validasi input
+3. Cek kredensial di database
+4. Buat session jika valid
+5. Redirect ke dashboard
+
+c. Logout:
+1. Hapus session dari database
+2. Hapus session dari server
+3. Redirect ke halaman login
+
+7. Catatan Penting
+-----------------
+- Pastikan database sudah dibuat dan terkonfigurasi dengan benar
+- Sesuaikan konfigurasi session di application/config/config.php
+- Aktifkan CSRF protection di application/config/config.php
+- Gunakan HTTPS untuk keamanan tambahan
+- Implementasikan rate limiting untuk mencegah brute force
+- Tambahkan logging untuk aktivitas penting
+- Backup database secara berkala 

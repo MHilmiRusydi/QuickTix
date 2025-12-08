@@ -1,0 +1,551 @@
+# Dokumentasi Pengembangan QuickTix
+
+## Versi: 2.1
+## Tanggal: 2024
+
+### Fitur Utama
+1. **Sistem Autentikasi**
+   - Login/Register user
+   - Session management
+   - Role-based access control (user/admin)
+
+2. **Manajemen Event**
+   - Pencarian event dengan filter
+   - Pagination (15 card per halaman)
+   - Detail event dengan modal
+   - Pembelian tiket
+
+3. **Manajemen Tiket**
+   - Daftar tiket user
+   - Detail tiket
+   - Cetak tiket
+   - Validasi QR code
+   - Pembatalan tiket
+
+4. **Sistem Pembayaran**
+   - Multiple payment methods
+   - Status tracking
+   - Konfirmasi pembayaran
+
+5. **Admin Panel** ⭐ **BARU**
+   - Dashboard admin dengan statistik
+   - Manajemen event (CRUD)
+   - Manajemen transaksi
+   - Manajemen user
+   - Validasi QR tiket
+
+### Struktur Database
+- **users**: Data pengguna (dengan kolom role)
+- **tickets**: Data event/tiket
+- **transactions**: Data transaksi pembelian
+
+### Perubahan Terbaru (Versi 2.1)
+
+#### Sistem Admin Panel
+1. **Controller Admin.php**
+   - Method `index()` - Dashboard admin
+   - Method `events()` - Manajemen event
+   - Method `add_event()` - Tambah event
+   - Method `edit_event()` - Edit event
+   - Method `delete_event()` - Hapus event
+   - Method `transactions()` - Manajemen transaksi
+   - Method `update_transaction_status()` - Update status
+   - Method `users()` - Manajemen user
+   - Method `validate_qr()` - Validasi QR
+
+2. **Views Admin**
+   - `admin/dashboard.php` - Dashboard dengan statistik
+   - `admin/events.php` - Daftar dan kelola event
+   - `admin/add_event.php` - Form tambah event
+   - `admin/transactions.php` - Daftar transaksi
+   - `admin/users.php` - Daftar user
+   - `admin/validate_qr.php` - Validasi QR tiket
+
+3. **Database Updates**
+   - Tambah kolom `role` di tabel `users`
+   - User admin default: admin@quicktix.com / admin123
+
+4. **Security Features**
+   - Role-based access control
+   - Middleware untuk cek role admin
+   - Session validation
+   - CSRF protection
+
+5. **UI/UX Admin Panel**
+   - Design modern dan responsif
+   - Navigation yang intuitif
+   - Color scheme konsisten
+   - Mobile-friendly
+
+#### Konsolidasi Controller (Versi 2.0)
+1. **Penghapusan File**
+   - ❌ `application/views/transaction/detail.php` - **DIHAPUS**
+   - ❌ `application/views/transaction/my_tickets.php` - **DIHAPUS**
+
+2. **Konsolidasi Controller**
+   - ✅ **Tickets.php** - Ditambahkan method `detail()` untuk menampilkan detail tiket
+   - ✅ **Transaction.php** - Disederhanakan, hanya menyisakan method `create()` dan `cancel()`
+   - ✅ **Events.php** - Update redirect dari `transaction/detail` ke `tickets/detail`
+
+3. **Perbaikan Link dan Redirect**
+   - ✅ Link detail di halaman tickets sekarang mengarah ke `tickets/detail/{id}`
+   - ✅ Redirect setelah pembelian tiket ke `tickets/detail/{id}`
+   - ✅ Hapus route transaction yang tidak diperlukan
+
+### Cara Setup Admin Panel
+
+#### 1. Database Setup
+Jalankan file `admin_setup.sql` di database:
+```sql
+-- Tambah kolom role
+ALTER TABLE users ADD COLUMN role ENUM('user', 'admin') DEFAULT 'user' AFTER status;
+
+-- Buat user admin
+INSERT INTO users (username, email, password, full_name, phone, status, role, created_at, updated_at) 
+VALUES ('admin', 'admin@quicktix.com', '$2y$10$...', 'Administrator QuickTix', '081234567890', 'active', 'admin', NOW(), NOW());
+```
+
+#### 2. Kredensial Admin
+- **Username**: `admin`
+- **Email**: `admin@quicktix.com`
+- **Password**: `admin123`
+- **Role**: `admin`
+
+#### 3. Akses Admin Panel
+1. Login dengan kredensial admin
+2. Klik tombol "Admin Panel" di navbar (hanya muncul untuk admin)
+3. Atau akses langsung: `http://localhost/quicktix/admin`
+
+### Fitur Admin Panel
+
+#### Dashboard Admin
+- Statistik total event, transaksi, dan user
+- Grafik transaksi per bulan
+- Quick actions untuk navigasi
+
+#### Manajemen Event
+- Daftar semua event dengan pagination
+- Tambah event baru dengan form lengkap
+- Edit event existing
+- Hapus event dengan konfirmasi
+- Filter berdasarkan kategori
+
+#### Manajemen Transaksi
+- Daftar semua transaksi dengan detail
+- Update status pembayaran (pending/paid/cancelled)
+- Modal untuk update status
+- Filter berdasarkan status
+
+#### Manajemen User
+- Daftar semua user terdaftar
+- Informasi detail user
+- Filter berdasarkan role dan status
+- Badge untuk role admin/user
+
+#### Validasi QR Tiket
+- Input manual kode QR
+- Validasi real-time dengan AJAX
+- Tampilan hasil validasi yang informatif
+- Detail tiket yang divalidasi
+
+### Keamanan Admin Panel
+
+#### Role-Based Access Control
+- Hanya user dengan role `admin` yang bisa akses
+- Middleware di constructor `Admin.php`
+- Redirect otomatis jika bukan admin
+
+#### Session Management
+- Cek login status di setiap method
+- Flash messages untuk feedback
+- CSRF protection untuk form
+
+#### Data Validation
+- Validasi input di semua form
+- Sanitasi data sebelum ke database
+- Error handling yang aman
+
+### File yang Ditambahkan
+
+#### Controllers
+- `application/controllers/Admin.php` - Controller utama admin panel
+
+#### Views
+- `application/views/admin/dashboard.php` - Dashboard admin
+- `application/views/admin/events.php` - Manajemen event
+- `application/views/admin/add_event.php` - Form tambah event
+- `application/views/admin/transactions.php` - Manajemen transaksi
+- `application/views/admin/users.php` - Manajemen user
+- `application/views/admin/validate_qr.php` - Validasi QR
+
+#### Database
+- `admin_setup.sql` - Script setup admin panel
+
+#### Dokumentasi
+- `Catatan Dokumentasi/Sistem Admin QuickTix.md` - Dokumentasi lengkap admin panel
+
+### Routes Admin
+```
+GET  /admin                    - Dashboard
+GET  /admin/events            - Daftar event
+GET  /admin/events/add        - Form tambah event
+POST /admin/events/add        - Proses tambah event
+GET  /admin/events/edit/{id}  - Form edit event
+POST /admin/events/edit/{id}  - Proses edit event
+POST /admin/events/delete/{id} - Hapus event
+GET  /admin/transactions      - Daftar transaksi
+POST /admin/update_transaction_status/{id} - Update status
+GET  /admin/users             - Daftar user
+GET  /admin/validate_qr       - Halaman validasi QR
+```
+
+### Perubahan Navbar
+- Tambah link "Admin Panel" di navbar untuk user dengan role admin
+- Styling khusus dengan gradient background
+- Icon crown untuk menandakan admin
+
+### Testing Admin Panel
+1. **Setup Database**: Jalankan `admin_setup.sql`
+2. **Login Admin**: Gunakan kredensial admin
+3. **Test Fitur**:
+   - Dashboard statistik
+   - CRUD event
+   - Update status transaksi
+   - Validasi QR tiket
+4. **Test Security**: Coba akses dengan user non-admin
+
+### Next Steps
+1. **Enhancement**: Tambah grafik di dashboard
+2. **Reporting**: Export data ke Excel/PDF
+3. **Audit Log**: Track aktivitas admin
+4. **Multi-role**: Tambah role moderator
+5. **API**: REST API untuk admin panel
+
+=== PERBAIKAN FORMAT HARGA PADA MODAL DETAIL EVENT ===
+Tanggal: [Tanggal hari ini]
+Masalah: Harga pada modal detail event tidak menampilkan pemisah ribuan (contoh: Rp 1500000.00)
+Solusi: Menggunakan Intl.NumberFormat('id-ID') untuk format harga yang benar
+
+File yang diperbaiki:
+- application/views/events/search.php
+
+Perubahan yang dilakukan:
+1. Mengganti event.price.toLocaleString() dengan new Intl.NumberFormat('id-ID').format(event.price)
+2. Memperbaiki fungsi showEventDetail() untuk format harga yang benar
+3. Memperbaiki fungsi showBuyModal() untuk format harga yang benar  
+4. Memperbaiki fungsi updateTotalPrice() untuk format total harga yang benar
+
+Hasil: Harga sekarang ditampilkan dengan pemisah ribuan yang benar (contoh: Rp 1.500.000)
+
+Catatan: Semua tempat lain sudah menggunakan number_format() dengan benar, hanya modal detail event yang menggunakan JavaScript yang perlu diperbaiki.
+
+=== FITUR LIGHTBOX UNTUK GAMBAR EVENT ===
+Tanggal: [Tanggal hari ini]
+Fitur: Menambahkan lightbox untuk melihat gambar event secara penuh dengan zoom in/out
+
+File yang dimodifikasi:
+- application/views/events/search.php
+
+Fitur yang ditambahkan:
+1. Lightbox modal dengan overlay hitam transparan
+2. Gambar dapat diklik untuk membuka lightbox
+3. Tombol close (×) di pojok kanan atas
+4. Tombol kontrol zoom:
+   - Zoom In (+) dengan ikon search-plus
+   - Zoom Out (-) dengan ikon search-minus  
+   - Reset Zoom (0) dengan ikon expand-arrows-alt
+5. Keyboard controls:
+   - ESC: Tutup lightbox
+   - + atau =: Zoom in
+   - -: Zoom out
+   - 0: Reset zoom
+6. Mouse wheel zoom (Ctrl + scroll)
+7. Click outside untuk menutup lightbox
+8. Caption gambar di bawah
+9. Responsive design untuk mobile
+
+CSS yang ditambahkan:
+- .lightbox-modal: Modal overlay dengan background hitam
+- .lightbox-content: Gambar dengan animasi scale
+- .lightbox-close: Tombol close dengan hover effect
+- .lightbox-controls: Container tombol kontrol zoom
+- .lightbox-btn: Tombol zoom dengan hover dan active state
+- .lightbox-caption: Caption gambar
+- Responsive styles untuk mobile
+
+JavaScript yang ditambahkan:
+- openImageLightbox(): Membuka lightbox dengan gambar
+- closeImageLightbox(): Menutup lightbox
+- zoomImage(): Fungsi zoom in/out/reset
+- Event listeners untuk keyboard dan mouse wheel
+- Click outside untuk menutup
+
+Hasil: User dapat mengklik gambar pada modal detail event untuk melihat gambar secara penuh dengan fitur zoom in/out yang interaktif.
+
+=== PERBAIKAN CENTERING GAMBAR PADA LIGHTBOX ===
+Tanggal: [Tanggal hari ini]
+Masalah: Gambar pada lightbox tidak berada tepat di tengah layar
+Solusi: Menggunakan flexbox dengan struktur HTML yang lebih baik
+
+File yang diperbaiki:
+- application/views/events/search.php
+
+Perubahan yang dilakukan:
+1. Menambahkan container div (.lightbox-image-container) untuk gambar
+2. Menggunakan flexbox pada .lightbox-modal dengan align-items: center dan justify-content: center
+3. Menghapus margin: auto dan display: block yang tidak efektif
+4. Memperbaiki posisi caption agar berada di bawah gambar dengan position: absolute
+5. Menambahkan backdrop-filter dan background semi-transparan pada caption
+6. Memperbaiki responsive design untuk mobile
+
+Struktur HTML baru:
+```html
+<div class="lightbox-modal">
+    <span class="lightbox-close">×</span>
+    <div class="lightbox-controls">...</div>
+    <div class="lightbox-image-container">
+        <img class="lightbox-content" alt="Event Image">
+    </div>
+    <div class="lightbox-caption">...</div>
+</div>
+```
+
+CSS yang diperbaiki:
+- .lightbox-modal: Menggunakan flexbox untuk centering
+- .lightbox-image-container: Container flexbox untuk gambar
+- .lightbox-content: Hapus margin auto, gunakan width/height auto
+- .lightbox-caption: Position absolute di bawah dengan transform center
+
+Hasil: Gambar sekarang berada tepat di tengah layar dengan centering yang sempurna baik horizontal maupun vertical.
+
+=== PERBAIKAN BUG LIGHTBOX YANG MENYEBABKAN HALAMAN TIDAK BISA DIKLIK ===
+Tanggal: [Tanggal hari ini]
+Masalah: Halaman search event tidak bisa diklik apapun setelah implementasi lightbox
+Penyebab: Konflik CSS pada .lightbox-modal yang memiliki display: flex yang didefinisikan dua kali
+
+File yang diperbaiki:
+- application/views/events/search.php
+
+Perubahan yang dilakukan:
+1. Menghapus display: flex yang duplikat pada .lightbox-modal
+2. Memindahkan display: flex ke .lightbox-modal.show
+3. Mengubah JavaScript untuk menggunakan display: 'flex' saat membuka lightbox
+4. Memperbaiki event listeners untuk menggunakan 'flex' bukan 'block'
+5. Reset currentZoom saat membuka lightbox baru
+
+CSS yang diperbaiki:
+```css
+.lightbox-modal {
+    display: none;
+    /* hapus display: flex yang duplikat */
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.lightbox-modal.show {
+    opacity: 1;
+    display: flex; /* pindahkan ke sini */
+}
+```
+
+JavaScript yang diperbaiki:
+- openImageLightbox(): Menggunakan display: 'flex'
+- Event listeners: Menggunakan 'flex' untuk pengecekan status
+- Reset currentZoom saat membuka lightbox baru
+
+Hasil: Halaman search event kembali berfungsi normal dan lightbox tetap berfungsi dengan baik.
+
+=== PERBAIKAN MODAL DETAIL EVENT (HALAMAN SEARCH) ===
+Tanggal: [Tanggal saat ini]
+Status: SELESAI
+
+DESKRIPSI PERBAIKAN:
+Modal detail event di halaman search event telah diperbaiki untuk mengatasi berbagai kekurangan yang diidentifikasi sebelumnya.
+
+PERBAIKAN YANG DILAKUKAN:
+
+1. RESPONSIVITAS:
+   - Menambahkan media query untuk tablet (max-width: 768px) dan mobile (max-width: 480px)
+   - Modal content menggunakan width 95% dengan max-width 800px
+   - Gambar event responsive dengan max-height yang disesuaikan
+   - Layout flex-direction column untuk mobile
+   - Tombol action full-width pada mobile
+   - Font size yang disesuaikan untuk layar kecil
+
+2. LOADING STATE:
+   - Menambahkan spinner loading dengan animasi CSS
+   - State management untuk loading, error, dan content
+   - Loading message "Memuat detail event..."
+
+3. ERROR HANDLING:
+   - Error state dengan icon dan pesan yang informatif
+   - Tombol "Coba Lagi" untuk retry functionality
+   - Proper error catching dengan console.error
+   - User-friendly error messages
+
+4. AKSESIBILITAS:
+   - ARIA attributes (role="dialog", aria-labelledby, aria-hidden)
+   - Keyboard navigation (Escape untuk tutup, Tab untuk focus)
+   - Focus trapping dalam modal
+   - Screen reader support
+   - High contrast mode support
+   - Reduced motion support untuk pengguna yang sensitif
+
+5. STRUKTUR KODE YANG LEBIH BAIK:
+   - Menghilangkan inline styles yang berlebihan
+   - CSS classes yang terorganisir
+   - JavaScript functions yang modular
+   - Proper state management
+   - Event listeners yang terpisah
+
+6. FITUR TAMBAHAN:
+   - Copy link event dengan feedback visual
+   - Success message notifications
+   - Formatted date display dalam bahasa Indonesia
+
+7. OPTIMASI MOBILE:
+   - Touch-friendly button sizes
+   - Proper spacing untuk touch interaction
+   - Optimized layout untuk layar kecil
+   - Share buttons yang responsive
+
+8. PERFORMANCE:
+   - Lazy loading untuk content
+   - Efficient DOM manipulation
+   - Proper cleanup pada modal close
+   - Memory leak prevention
+
+FILE YANG DIMODIFIKASI:
+- application/views/events/search.php
+
+CSS CLASSES BARU:
+- .loading-spinner, .spinner
+- .error-state
+- .event-detail-container, .event-detail-header
+- .event-detail-image, .event-detail-info
+- .event-detail-item, .event-detail-description
+- .event-detail-actions, .event-detail-btn
+- .success-message
+
+JAVASCRIPT FUNCTIONS BARU:
+- retryLoadEvent()
+- showSuccessMessage()
+- setupEventDetailListeners()
+- trapFocus()
+- Keyboard navigation handlers
+
+MEDIA QUERIES:
+- @media (max-width: 768px) - Tablet
+- @media (max-width: 480px) - Mobile
+- @media (prefers-contrast: high) - High contrast
+- @media (prefers-reduced-motion: reduce) - Reduced motion
+
+HASIL:
+- Modal yang lebih responsif dan user-friendly
+- Better error handling dan user feedback
+- Improved accessibility compliance
+- Enhanced mobile experience
+- Modern UI/UX dengan fitur salin link yang sederhana
+- Code yang lebih maintainable dan scalable
+
+=== PERBAIKAN MODAL BELI TIKET (HALAMAN SEARCH) ===
+Tanggal: [Tanggal saat ini]
+Status: SELESAI
+
+DESKRIPSI PERBAIKAN:
+Modal beli tiket di halaman search event telah diperbaiki secara menyeluruh untuk mengatasi berbagai kekurangan yang diidentifikasi sebelumnya.
+
+PERBAIKAN YANG DILAKUKAN:
+
+1. LOADING & ERROR STATES:
+   - Menambahkan loading spinner saat memuat form pembelian
+   - Error state dengan pesan yang informatif
+   - Tombol "Coba Lagi" untuk retry functionality
+   - Proper error handling dengan console.error
+
+2. RESPONSIVITAS:
+   - Media query untuk tablet (768px) dan mobile (480px)
+   - Layout yang menyesuaikan untuk layar kecil
+   - Touch-friendly button sizes
+   - Optimized spacing untuk mobile
+
+3. AKSESIBILITAS:
+   - ARIA attributes (role="dialog", aria-labelledby, aria-hidden)
+   - Keyboard navigation (Escape untuk tutup, Tab untuk focus)
+   - Focus trapping dalam modal
+   - Screen reader support
+   - Proper form labels dan IDs
+
+4. VALIDASI & UX:
+   - Real-time form validation
+   - Quantity controls dengan tombol +/- 
+   - Konfirmasi terms & conditions
+   - Progress steps indicator
+   - Disabled submit button sampai form valid
+
+5. INFORMASI EVENT:
+   - Header dengan informasi event yang lengkap
+   - Preview harga per tiket
+   - Informasi lokasi dan tanggal
+   - Jumlah tiket tersedia
+
+6. FITUR TAMBAHAN:
+   - Quantity controls yang interaktif
+   - Price summary yang detail
+   - Terms & conditions checkbox
+   - Privacy policy links
+   - Progress steps (3 tahap)
+
+7. STRUKTUR KODE:
+   - State management yang proper
+   - Modular JavaScript functions
+   - Clean CSS organization
+   - Proper cleanup pada modal close
+
+FILE YANG DIMODIFIKASI:
+- application/views/events/search.php
+
+CSS CLASSES BARU:
+- .buy-loading-spinner, .buy-error-state
+- .buy-content-container, .buy-form-header
+- .event-info, .event-info-item
+- .buy-form-steps, .step-indicator
+- .quantity-controls, .quantity-btn
+- .price-summary, .price-item
+- .buy-btn, .terms-checkbox
+
+JAVASCRIPT FUNCTIONS BARU:
+- retryLoadBuyForm()
+- changeQuantity(), validateQuantity()
+- updateQuantityDisplay(), updateQuantityButtons()
+- getCurrentPrice(), setupBuyFormValidation()
+- showTerms(), showPrivacy()
+
+MEDIA QUERIES:
+- @media (max-width: 768px) - Tablet
+- @media (max-width: 480px) - Mobile
+
+FITUR BARU:
+- Quantity controls dengan tombol +/- 
+- Real-time price calculation
+- Form validation dengan visual feedback
+- Terms & conditions dengan links
+- Progress steps indicator
+- Enhanced error handling
+- Mobile-optimized interface
+
+HASIL:
+- Modal beli tiket yang lebih user-friendly
+- Better error handling dan user feedback
+- Improved accessibility compliance
+- Enhanced mobile experience
+- Modern UI/UX dengan validasi yang robust
+- Code yang lebih maintainable dan scalable
+
+---
+
+**Status**: ✅ Production Ready  
+**Admin Panel**: ✅ Fully Functional  
+**Security**: ✅ Role-based Access Control  
+**Documentation**: ✅ Complete

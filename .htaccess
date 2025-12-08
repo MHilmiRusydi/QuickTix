@@ -1,0 +1,56 @@
+RewriteEngine On
+
+# Prevent direct access to application and system folders
+RewriteCond %{REQUEST_URI} ^/application/.*$ [OR]
+RewriteCond %{REQUEST_URI} ^/system/.*$
+RewriteRule ^(.*)$ /index.php?/$1 [L]
+
+# Prevent access to sensitive files
+<Files "*.sql">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "*.log">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files ".env">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Prevent access to config files
+<Files "database.php">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# CodeIgniter URL rewriting
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php/$1 [L]
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Disable directory browsing
+Options -Indexes
+
+# Prevent access to hidden files
+<Files ".*">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Allow access to specific file types
+<FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch> 
